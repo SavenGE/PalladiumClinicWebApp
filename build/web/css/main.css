@@ -1,0 +1,96 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 07-Feb-2017, 15:13:14
+    Author     : neptune
+*/
+
+.ui-layout-pane {
+    border: 1;
+}
+
+.menuButtons{
+    font-size: 12px;
+}
+
+.calendarClass input {
+    width:200px;
+    font-size: 12px !important
+}
+
+.ui-datatable-odd {
+    background: #ffffff;
+}
+
+.ui-datatable-even {
+    background: #F2F5F9;
+}
+
+.mystyle.ui-datatable .ui-datatable-scrollable-body{
+    /*overflow-y: scroll !important;*/
+    /*overflow-x: hidden !important;*/
+    overflow-x: auto !important;
+}
+
+.ui-datatable table {
+    table-layout: fixed !important;
+}
+
+li.ui-selectonemenu-item{
+    font-size:12px;
+}
+
+.firstColumn {
+    width: 150px;
+}
+.secondColumn {
+    width: 150px;
+}
+.thirdColumn { 
+    width: 150px;
+}
+.fourthColumn {
+    width: 150px;
+}
+.fifthColumn {
+    width: 100px;
+}
+.sixthColumn {
+    width: 100px;
+}
+
+.firstReceiptColumn {
+    width: 170px;
+}
+.secondRceiptColumn {
+    width: 200px;
+}
+
+.ui-datatable .ui-datatable-header {
+    /*text-align: right !important;*/
+}
+
+.ui-button-text-only .ui-button-text {
+    padding: 0.3em 0.4em;
+}
+
+.year-spinner input {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.ui-selectonemenu {
+    padding-right: 0 !important;
+}
+
+.ui-selectonemenu label {
+    width: auto !important;
+}
+
+.custom-filter-dropdown-inputtext {
+    width: 100px;
+    box-sizing: border-box;
+}

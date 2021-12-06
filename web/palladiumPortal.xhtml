@@ -1,0 +1,450 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui" xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <f:view contentType="text/html">
+        <h:head>
+            <f:facet name="first">
+                <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+                <link rel="icon" href="images/palladium-icon-32x32.png" />
+                <title>Palladium Portal</title>
+            </f:facet>
+            <link rel="stylesheet" href="css/animate.css"></link>
+            <link rel="stylesheet" href="css/main.css"/>
+        </h:head>
+        <h:body>
+
+            <p:layout fullPage="true" style="font-size: 12px;font-family: monospace;border: none;">
+
+                <p:ajaxStatus onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()" />
+
+                <p:dialog id="statusDialog" widgetVar="statusDialog" modal="true" draggable="false" 
+                          closable="false" resizable="false" showHeader="false">
+                    <p:graphicImage value="images/sun-loader.gif" />
+                </p:dialog>
+
+                <p:layoutUnit position="center" style="width:70%; height: 100%;border: none;">
+                    <h:form id="toolbarForm">
+                        <p:toolbar style="height:20%;">
+                            <f:facet name="left">
+                                <p:graphicImage url="/images/palladium-logo.png" style="width: 20%; height:20%; border-radius: 0%;"/>
+                            </f:facet>
+                            <f:facet name="right">
+                                <p:outputLabel value="Palladium Clinic" style="color: dodgerblue;font-size: 16px;"/>
+                                <span class="ui-separator">
+                                    <span class="ui-icon ui-icon-grip-dotted-vertical" ></span>
+                                </span>
+                                <p:splitButton icon="ui-icon-person" value="User: UserName">
+                                    <p:separator/>
+                                    <p:menuitem style="width: 200px;" value="Logout" action="#{loginBean.logout()}" icon="ui-icon-power" />
+                                    <p:separator/>
+                                </p:splitButton>
+                            </f:facet>
+                        </p:toolbar>
+                    </h:form>
+                    <h:form id="mainform">
+                        <p:growl id="messages" showDetail="true" life="5000" autoUpdate="true">
+                        </p:growl>
+
+                        <p:tabView id="palladiumPortalServices">
+                            <p:tab id="patientFullSetUp" title="Patient Services">
+                                <p:tabView id="patientServices">
+
+                                    <p:tab id="patientSetUp" title="Patient Registration">
+                                        <p:fieldset id="addPatientFieldSet" legend="Register Patient" style="margin-bottom:5px" toggleable="true" toggleSpeed="500">
+                                            <h:panelGrid id="addPatientPanel" columns="4" 
+                                                         style="margin: auto;" columnClasses="firstColumn,secondColumn,thirdColumn,fourthColumn">
+                                                <h:outputText value="First Name:"  />
+                                                <p:inputText id="firstName" value="#{PalladiumPortalService.firstName}" style="width: 200px;" 
+                                                             required="true" requiredMessage="Patient First Name is Required." />
+
+                                                <h:outputText value="Last Name:"  />
+                                                <p:inputText id="lastName" value="#{PalladiumPortalService.lastName}" style="width: 200px;" 
+                                                             required="true" requiredMessage="Patient Last Name is Required."/>
+
+                                                <h:outputText value="Phone No:"  />
+                                                <p:inputText id="phoneNo" value="#{PalladiumPortalService.phoneNo}" style="width: 200px;" 
+                                                             required="true" requiredMessage="Patient Phone No is Required." 
+                                                             validatorMessage="Invalid Patient Phone. Format: 254712345678">
+                                                    <f:validateRegex pattern="^[0-9]{12}$"/>
+                                                </p:inputText>
+
+                                                <h:outputText value="ID No:"  />
+                                                <p:inputText id="idNo" value="#{PalladiumPortalService.idNo}" style="width: 200px;" 
+                                                             required="true" requiredMessage="Patient ID No is Required." 
+                                                             validatorMessage="Invalid ID NO">
+                                                    <f:validateRegex pattern="^[0-9]{8}$"/>
+                                                </p:inputText>
+
+                                                <h:outputText value="P.O. Box:"  />
+                                                <p:inputText id="poBox" value="#{PalladiumPortalService.address}" style="width: 200px;" 
+                                                             required="true" requiredMessage="Patient Postal Address is Required."/>
+
+                                                <h:outputText value="DoB:"  />
+                                                <p:calendar id="dob" maxdate="#{PalladiumPortalService.todaysDate}" 
+                                                            value="#{PalladiumPortalService.dob}" showOn="button" 
+                                                            style="font-size: 12px;font-family: monospace;width: 300px;" 
+                                                            effect="fold" pattern="dd/MM/yyyy" navigator="true" 
+                                                            required="true" requiredMessage="Patient Date of Birth is Required.">
+                                                </p:calendar>
+                                                <p:spacer></p:spacer><p:spacer></p:spacer><p:spacer></p:spacer>
+                                                <p:commandButton id="savePatient"  value="Save" icon="ui-icon-disk"
+                                                                 style="float: right;width: 80px;"
+                                                                 oncomplete="if (!args.validationFailed) {PF('savePatientConfirmDialog').show()}"
+                                                                 process="@this addPatientPanel" update=""/>
+
+                                                <p:dialog id="savePatientConfirmDialog" widgetVar="savePatientConfirmDialog" header="Confirm"
+                                                          width="250" closable="false" resizable="false" showEffect="clip" hideEffect="clip" modal="false" 
+                                                          style="">
+
+                                                    <!-- margin: 10px, 20px, 15px, 5px;-->
+                                                    <!--means 10px top, 20px right, 15px bottom, 5px left-->
+                                                    <h:panelGrid id="savePatientConfirmPanel" columns="1" style="margin: 0px 5px 0px 5px;width: 100%;">
+                                                        <h:panelGrid id="savePatientConfirmInnerPanel" columns="3" style="margin: 0 auto;width: 100%;">
+                                                            <p:graphicImage url="/images/px20_confirm.png" /> 
+                                                            <p:spacer/>
+                                                            <b>Save the Patient Data ?</b>
+                                                        </h:panelGrid>
+                                                        <p:separator />
+                                                    </h:panelGrid>
+
+                                                    <p:commandButton value="No" styleClass="ui-confirmdialog-no" icon="ui-icon-close" style="float: right;"
+                                                                     onclick="PF('savePatientConfirmDialog').hide()" 
+                                                                     process="@this addPatientPanel"
+                                                                     /> 
+                                                    <p:commandButton value="Yes" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" style="float: right;"
+                                                                     action="#{PalladiumPortalService.savePatient()}" oncomplete="PF('savePatientConfirmDialog').hide()"
+                                                                     process="@this addPatientPanel"
+                                                                     update="addPatientPanel :#{p:component('patientsTable')} "/>
+                                                    <p:spacer></p:spacer>
+
+                                                </p:dialog>  
+                                            </h:panelGrid>
+                                        </p:fieldset>
+                                        <p:fieldset legend="Available Patients" style="margin-bottom:5px" toggleable="true" toggleSpeed="500" collapsed="false">
+
+                                            <h:panelGrid id="searchPatientPanel" columns="6" style="margin: 0 auto;">
+                                                <h:outputText value="Search By:"  />
+                                                <p:selectOneMenu id="searchPatientMode" value="#{PalladiumPortalService.searchPatientMode}" 
+                                                                 style="width: 150px;float: right;" required="true" 
+                                                                 requiredMessage="Patient Search Mode is Required.">
+
+                                                    <p:ajax update="searchPatientValue" />
+                                                    <f:selectItem itemLabel="Select Search Mode" itemValue="" noSelectionOption="true"/>
+                                                    <f:selectItem itemLabel="#{PalladiumPortalService.searchAll}" itemValue="#{PalladiumPortalService.searchAll}"/>
+                                                    <f:selectItem itemLabel="#{PalladiumPortalService.searchByPatientIDNO}" itemValue="#{PalladiumPortalService.searchByPatientIDNO}"/>
+                                                    <f:selectItem itemLabel="#{PalladiumPortalService.searchByPatientPhone}" itemValue="#{PalladiumPortalService.searchByPatientPhone}"/>
+                                                </p:selectOneMenu>
+
+                                                <h:outputText value="Search Value:"  />
+                                                <p:inputText id="searchPatientValue" value="#{PalladiumPortalService.searchPatientValue}" 
+                                                             style="width: 150px;"/>
+
+
+                                                <p:commandButton action="#{PalladiumPortalService.searchPatient()}" value="Search" 
+                                                                 icon="ui-icon-search" style="float: right;" 
+                                                                 process="@this searchPatientValue"
+                                                                 update="patientsTable"/>
+                                            </h:panelGrid>
+                                            <br/>
+                                            <p:dataTable id="patientsTable" var="patient" value="#{PalladiumPortalService.searchPatientList}" 
+                                                         filteredValue="#{PalladiumPortalService.filteredPatientsList}"
+                                                         paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} 
+                                                         {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" paginatorPosition="bottom" 
+                                                         rows="100" rowsPerPageTemplate="100,200" style=""
+                                                         styleClass="mystyle" scrollable="true" scrollHeight="170" lazy="false" 
+                                                         emptyMessage="No Patients Found" 
+                                                         rowKey="#{patient.patientId}"  
+                                                         selectionMode="single"
+                                                         selection="#{PalladiumPortalService.selectedPatient}">
+
+                                                <p:ajax event="rowSelect"
+                                                        update=":#{p:component('modifyPatientBtn')} :#{p:component('triagePatientBtn')}"/>
+
+                                                <p:column headerText="First Name" footerText="CONTAINS" filterBy="#{patient.firstName}" filterMatchMode="contains"> 
+                                                    <h:outputText value="#{patient.firstName}" />
+                                                </p:column>
+                                                <p:column headerText="Last Name" footerText="CONTAINS" filterBy="#{patient.lastName}" filterMatchMode="contains">
+                                                    <h:outputText value="#{patient.lastName}" />
+                                                </p:column>
+                                                <p:column headerText="Phone No">
+                                                    <h:outputText value="#{patient.phoneNo}" />
+                                                </p:column>
+                                                <p:column headerText="ID No">
+                                                    <h:outputText value="#{patient.idNo}" />
+                                                </p:column>
+                                                <p:column headerText="P.O Box">
+                                                    <h:outputText value="#{patient.address}" />
+                                                </p:column>
+                                                <p:column headerText="DoB">
+                                                    <h:outputText value="#{patient.dob}" />
+                                                </p:column>
+                                            </p:dataTable> 
+                                            <br/>
+
+                                            <p:commandButton id="modifyPatientBtn" value="Modify" icon="ui-icon-pencil"
+                                                             style="float: right;"
+                                                             action="#{PalladiumPortalService.onPatientAction('MODIFY')}"
+                                                             process="@this patientsTable"/>
+
+                                            <p:commandButton id="triagePatientBtn" value="Send To Triage" icon="ui-icon-transferthick-e-w"
+                                                             style="float: right;"
+                                                             action="#{PalladiumPortalService.onPatientAction('SEND_TRIAGE')}"
+                                                             process="@this patientsTable"/>
+
+                                        </p:fieldset>
+                                    </p:tab>
+
+                                    <p:tab id="triageSetUp" title="Triage">
+                                        <h:panelGrid id="refreshSubmissionsPanel" columns="1" style="margin: 0 auto;">
+
+                                            <h:outputText id="numPatientsInQueue" 
+                                                          value="#{PalladiumPortalService.numPatientsInQueue} Patient(s) In Queue" 
+                                                          style="font-weight:bold"/>
+
+                                            <p:commandButton id="fetchNextPatient"  value="Next Patient" icon="ui-icon-seek-next"
+                                                             action="#{PalladiumPortalService.searchTriagePatient()}"
+                                                             style="width: 150px;"
+                                                             process="@this" update="numPatientsInQueue triageDataPanel"/>
+
+                                        </h:panelGrid>
+                                        <p:fieldset id="triageFieldSet" legend="Triage Patient" 
+                                                    style="margin-bottom:5px" toggleable="true" toggleSpeed="500">
+
+                                            <h:panelGrid id="triageDataPanel" columns="4" 
+                                                         style="margin: auto;" columnClasses="firstColumn,secondColumn,thirdColumn,fourthColumn">
+                                                <h:outputText value="First Name:"  />
+                                                <p:inputText id="triagePatientFirstName" value="#{PalladiumPortalService.triagePatient.firstName}" 
+                                                             style="width: 200px;" readonly="true" 
+                                                             required="true" requiredMessage="Patient First Name is Required." />
+
+                                                <h:outputText value="Last Name:"  />
+                                                <p:inputText id="triagePatientLastName" value="#{PalladiumPortalService.triagePatient.lastName}" 
+                                                             style="width: 200px;" readonly="true"
+                                                             required="true" requiredMessage="Patient Last Name is Required."/>
+
+                                                <h:outputText value="ID No:"  />
+                                                <p:inputText id="triagePatientIdNo" value="#{PalladiumPortalService.triagePatient.idNo}" 
+                                                             style="width: 200px;" readonly="true"
+                                                             required="true" requiredMessage="Patient ID No is Required." 
+                                                             validatorMessage="Invalid ID NO">
+                                                    <f:validateRegex pattern="^[0-9]{8}$"/>
+                                                </p:inputText>
+
+                                                <h:outputText value="Weight(KG):"  />
+                                                <p:inputText id="weight" value="#{PalladiumPortalService.triagePatient.triageData.weight}" style="width: 200px;" 
+                                                             required="true" requiredMessage="Weight is Required." />
+
+                                                <h:outputText value="Temperature(&#8451;):"  />
+                                                <p:inputText id="temperature" value="#{PalladiumPortalService.triagePatient.triageData.temperature}" style="width: 200px;" 
+                                                             required="true" requiredMessage="Temperature is Required." />
+                                                <p:spacer></p:spacer>
+                                                <p:selectBooleanCheckbox id="fever" 
+                                                                         value="#{PalladiumPortalService.triagePatient.triageData.fever}" 
+                                                                         itemLabel="Fever ?"/>
+
+                                                <p:selectBooleanCheckbox id="tiredness" 
+                                                                         value="#{PalladiumPortalService.triagePatient.triageData.tiredness}" 
+                                                                         itemLabel="Tiredness ?"/>
+
+                                                <p:selectBooleanCheckbox id="lossOfTaste" 
+                                                                         value="#{PalladiumPortalService.triagePatient.triageData.lossOfTaste}" 
+                                                                         itemLabel="Loss Of Taste ?"/>
+
+                                                <p:selectBooleanCheckbox id="lossOfSmell" 
+                                                                         value="#{PalladiumPortalService.triagePatient.triageData.lossOfSmell}" 
+                                                                         itemLabel="Loss Of Smell ?"/>
+
+                                                <p:selectBooleanCheckbox id="soreThroat" 
+                                                                         value="#{PalladiumPortalService.triagePatient.triageData.soreThroat}" 
+                                                                         itemLabel="Sore Throat ?"/>
+
+                                                <p:selectBooleanCheckbox id="headache" 
+                                                                         value="#{PalladiumPortalService.triagePatient.triageData.headache}" 
+                                                                         itemLabel="Headache ?"/>
+
+                                                <p:selectBooleanCheckbox id="chestPain" 
+                                                                         value="#{PalladiumPortalService.triagePatient.triageData.chestPain}" 
+                                                                         itemLabel="Chest Pain ?"/>
+
+                                                <p:selectBooleanCheckbox id="difficultBreathing" 
+                                                                         value="#{PalladiumPortalService.triagePatient.triageData.difficultBreathing}" 
+                                                                         itemLabel="Difficulty Breathing ?"/>
+
+                                                <p:selectBooleanCheckbox id="breathShortness" 
+                                                                         value="#{PalladiumPortalService.triagePatient.triageData.breathShortness}" 
+                                                                         itemLabel="Shortness Of Breathe ?"/>
+
+                                                <p:spacer></p:spacer><p:spacer></p:spacer><p:spacer></p:spacer>
+
+
+
+                                                <h:panelGrid columns="2" style="float: right;">
+                                                    <p:commandButton id="suspendTriagePatient"  value="Suspend" icon="ui-icon-shuffle"
+                                                                     style="float: right;width: 80px;"
+                                                                     oncomplete="PF('suspendTriageDataConfirmDialog').show()"
+                                                                     process="@this"/>
+
+                                                    <p:commandButton id="saveTriageData"  value="Save" icon="ui-icon-disk"
+                                                                     style="float: right;width: 80px;"
+                                                                     oncomplete="if (!args.validationFailed) {PF('saveTriageDataConfirmDialog').show()}"
+                                                                     process="@this triageDataPanel" update=""/> 
+                                                </h:panelGrid>
+
+
+
+                                                <p:dialog id="saveTriageDataConfirmDialog" widgetVar="saveTriageDataConfirmDialog" header="Confirm"
+                                                          width="250" closable="false" resizable="false" showEffect="clip" hideEffect="clip" modal="false" 
+                                                          style="">
+
+                                                    <!-- margin: 10px, 20px, 15px, 5px;-->
+                                                    <!--means 10px top, 20px right, 15px bottom, 5px left-->
+                                                    <h:panelGrid id="saveTriageDataConfirmPanel" columns="1" style="margin: 0px 5px 0px 5px;width: 100%;">
+                                                        <h:panelGrid id="saveTriageDataConfirmInnerPanel" columns="3" style="margin: 0 auto;width: 100%;">
+                                                            <p:graphicImage url="/images/px20_confirm.png" /> 
+                                                            <p:spacer/>
+                                                            <b>Save the Triage Data ?</b>
+                                                        </h:panelGrid>
+                                                        <p:separator />
+                                                    </h:panelGrid>
+
+                                                    <p:commandButton value="No" styleClass="ui-confirmdialog-no" icon="ui-icon-close" style="float: right;"
+                                                                     onclick="PF('saveTriageDataConfirmDialog').hide()" 
+                                                                     process="@this triageDataPanel"
+                                                                     /> 
+                                                    <p:commandButton value="Yes" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" style="float: right;"
+                                                                     action="#{PalladiumPortalService.saveTriageData('SAVE')}" oncomplete="PF('saveTriageDataConfirmDialog').hide()"
+                                                                     process="@this triageDataPanel"
+                                                                     update="numPatientsInQueue triageDataPanel :#{p:component('screenedPatientsTable')} "/>
+                                                    <p:spacer></p:spacer>
+
+                                                </p:dialog>  
+
+                                                <p:dialog id="suspendTriageDataConfirmDialog" widgetVar="suspendTriageDataConfirmDialog" header="Confirm"
+                                                          width="250" closable="false" resizable="false" showEffect="clip" hideEffect="clip" modal="false" 
+                                                          style="">
+
+                                                    <!-- margin: 10px, 20px, 15px, 5px;-->
+                                                    <!--means 10px top, 20px right, 15px bottom, 5px left-->
+                                                    <h:panelGrid id="suspendTriageDataConfirmPanel" columns="1" style="margin: 0px 5px 0px 5px;width: 100%;">
+                                                        <h:panelGrid id="suspendTriageDataConfirmInnerPanel" columns="3" style="margin: 0 auto;width: 100%;">
+                                                            <p:graphicImage url="/images/px20_confirm.png" /> 
+                                                            <p:spacer/>
+                                                            <b>Suspend Triage Data for this patient by 1 minute ?</b>
+                                                        </h:panelGrid>
+                                                        <p:separator />
+                                                    </h:panelGrid>
+
+                                                    <p:commandButton value="No" styleClass="ui-confirmdialog-no" icon="ui-icon-close" style="float: right;"
+                                                                     onclick="PF('suspendTriageDataConfirmDialog').hide()" 
+                                                                     process="@this"
+                                                                     /> 
+                                                    <p:commandButton value="Yes" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" style="float: right;"
+                                                                     action="#{PalladiumPortalService.saveTriageData('SUSPEND')}" oncomplete="PF('suspendTriageDataConfirmDialog').hide()"
+                                                                     process="@this"
+                                                                     update="numPatientsInQueue triageDataPanel :#{p:component('screenedPatientsTable')} "/>
+                                                    <p:spacer></p:spacer>
+
+                                                </p:dialog>
+                                            </h:panelGrid>
+                                        </p:fieldset>
+                                        <p:fieldset legend="Screened Patients" style="margin-bottom:5px" toggleable="true" toggleSpeed="500" collapsed="false">
+                                            <h:panelGrid id="searchScreenedPatientPanel" columns="6" style="margin: 0 auto;">
+                                                <h:outputText value="Search By:"  />
+                                                <p:selectOneMenu id="searchScreenedPatientMode" value="#{PalladiumPortalService.searchScreenedPatientMode}" 
+                                                                 style="width: 150px;float: right;" required="true" 
+                                                                 requiredMessage="Patient Search Mode is Required.">
+
+                                                    <p:ajax update="searchScreenedPatientValue" />
+                                                    <f:selectItem itemLabel="Select Search Mode" itemValue="" noSelectionOption="true"/>
+                                                    <f:selectItem itemLabel="#{PalladiumPortalService.searchAll}" itemValue="#{PalladiumPortalService.searchAll}"/>
+                                                    <f:selectItem itemLabel="#{PalladiumPortalService.searchByPatientIDNO}" itemValue="#{PalladiumPortalService.searchByPatientIDNO}"/>
+                                                    <f:selectItem itemLabel="#{PalladiumPortalService.searchByPatientPhone}" itemValue="#{PalladiumPortalService.searchByPatientPhone}"/>
+                                                </p:selectOneMenu>
+
+                                                <h:outputText value="Search Value:"  />
+                                                <p:inputText id="searchScreenedPatientValue" value="#{PalladiumPortalService.searchScreenedPatientValue}" 
+                                                             style="width: 150px;"/>
+
+
+                                                <p:commandButton action="#{PalladiumPortalService.searchScreenedPatients()}" value="Search" 
+                                                                 icon="ui-icon-search" style="float: right;" 
+                                                                 process="@this searchScreenedPatientValue"
+                                                                 update="screenedPatientsTable"/>
+                                            </h:panelGrid>
+                                            <br/>
+                                            <p:dataTable id="screenedPatientsTable" var="patient" value="#{PalladiumPortalService.searchScreenedPatientList}" 
+                                                         filteredValue="#{PalladiumPortalService.searchScreenedFilteredPatientList}"
+                                                         paginator="true" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} 
+                                                         {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" paginatorPosition="bottom" 
+                                                         rows="100" rowsPerPageTemplate="100,200" style=""
+                                                         styleClass="mystyle" scrollable="true" scrollHeight="170" lazy="false" 
+                                                         emptyMessage="No Patients Found" 
+                                                         rowKey="#{patient.patientId}"  
+                                                         selectionMode="single"
+                                                         selection="#{PalladiumPortalService.selectedScreenedPatient}">
+
+                                                <p:column headerText="Name" footerText="CONTAINS" filterBy="#{patient.firstName}" filterMatchMode="contains"> 
+                                                    <h:outputText value="#{patient.firstName} #{patient.lastName}" />
+                                                </p:column>
+                                                <p:column headerText="ID No">
+                                                    <h:outputText value="#{patient.idNo}" />
+                                                </p:column>
+                                                <p:column headerText="Weight">
+                                                    <h:outputText value="#{patient.triageData.weight} KG" />
+                                                </p:column>
+                                                <p:column headerText="Temperarure">
+                                                    <h:outputText value="#{patient.triageData.temperature} &#8451;" />
+                                                </p:column>
+                                                <p:column headerText="Fever ?">
+                                                    <h:outputText value="#{patient.triageData.fever ? 'Yes':'No'}" />
+                                                </p:column>
+                                                <p:column headerText="Tired ?">
+                                                    <h:outputText value="#{patient.triageData.tiredness? 'Yes':'No'}" />
+                                                </p:column>
+                                                <p:column headerText="Taste Loss ?">
+                                                    <h:outputText value="#{patient.triageData.lossOfTaste? 'Yes':'No'}" />
+                                                </p:column>
+                                                <p:column headerText="Smell Loss ?">
+                                                    <h:outputText value="#{patient.triageData.lossOfSmell? 'Yes':'No'}" />
+                                                </p:column>
+                                                <p:column headerText="Sore Throat ?">
+                                                    <h:outputText value="#{patient.triageData.soreThroat? 'Yes':'No'}" />
+                                                </p:column>
+                                                <p:column headerText="HeadAche ?">
+                                                    <h:outputText value="#{patient.triageData.headache? 'Yes':'No'}" />
+                                                </p:column>
+                                                <p:column headerText="Chest Pain ?">
+                                                    <h:outputText value="#{patient.triageData.chestPain? 'Yes':'No'}" />
+                                                </p:column>
+                                                <p:column headerText="Difficulty Breathing ?">
+                                                    <h:outputText value="#{patient.triageData.difficultBreathing? 'Yes':'No'}" />
+                                                </p:column>
+                                                <p:column headerText="Breath Shortness ?">
+                                                    <h:outputText value="#{patient.triageData.breathShortness? 'Yes':'No'}" />
+                                                </p:column>
+                                            </p:dataTable> 
+                                            <br/>
+
+                                        </p:fieldset>
+                                    </p:tab>
+
+                                </p:tabView>
+
+                            </p:tab>
+                        </p:tabView>
+                    </h:form>
+
+                </p:layoutUnit>
+
+                <p:layoutUnit position="south" resizable="false" style="border: none;">
+                    <p:outputLabel value="&#169; Palladium Clinic" style="float: left;color: blue;"/>
+                </p:layoutUnit>
+            </p:layout>
+        </h:body>
+    </f:view>
+</html>
+
